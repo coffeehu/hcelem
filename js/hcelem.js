@@ -221,6 +221,17 @@ Element.prototype.init = function(){
 	});
 }
 
+/*
+全局设置
+opt={
+	delFn:fuction //删除时的回调
+}
+*/
+Element.prototype.setTab = function(opt){
+	this.opt = opt;
+}
+
+
 //tab的点击切换
 Element.prototype.clickTab = function(li){
 	//tab标签样式改变
