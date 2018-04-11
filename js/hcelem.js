@@ -3,7 +3,7 @@
 
 var utils = {
 	addcss:function(){
-		var id = 'hc-elem-css';
+		var id = 'hc-tab-css';
 		if(document.getElementById(id)) return;
 		var head = document.getElementsByTagName('head')[0];
 		var link = document.createElement('link');
@@ -130,6 +130,7 @@ var utils = {
 		return el.getAttribute(prop);
 	},
 	remove:function(el){
+		if(!el) return el;
 		var p = el.parentNode;
 		if(p){
 			el.parentNode.removeChild( el );
@@ -192,7 +193,7 @@ var Element = function(){
 Element.prototype.init = function(){
 	var that = this;
 	//tab的点击切换事件/删除时间
-	var titles = document.getElementsByClassName('hc-tab-title');
+	var titles = this.titles = document.getElementsByClassName('hc-tab-title');
 	utils.each(titles,function(index,title){
 		title.onclick = function(evt){
 			var tar = evt.target;
@@ -200,7 +201,8 @@ Element.prototype.init = function(){
 			if( tagName === 'li'){ //点击切换标签
 				that.clickTab(tar);
 			}else if( utils.hasClass(tar,'hc-tab-close') ){ //删除标签
-				that.delTab(tar);
+				var li = utils.parent(tar);
+				that.delTab(li);
 			}
 		}
 	});
@@ -219,7 +221,60 @@ Element.prototype.init = function(){
 			});
 		}
 	});
+
+	// title 高度自适应：tab标签页过多的时候，自动分行
+	that.tabAuto();
+	window.onresize = function(){
+		that.tabAuto();
+	}
 }
+
+
+/*
+	自适应tab栏，当tab标签页太多超出title栏时自动分行
+
+	注意，若是不使用 setTimeout(), scrollWidth 的值 和 clientWidth 值一样！
+	可能是在 js 里加载 css 文件导致的；
+	因为关掉自动载入css，直接在html文件的头部引用css，scrollWidth 获取正常。
+*/
+Element.prototype.tabAuto = function(){
+	var that = this;
+	utils.each(that.titles,function(index,title){
+		utils.removeClass(title,'hc-tab-more');
+		var bar = title.getElementsByClassName('hc-tab-bar')[0];
+		if(bar){
+			utils.remove(bar);
+		}
+		setTimeout(function(){
+			var width = title.clientWidth;
+			var swidth = title.scrollWidth;
+			console.log('title1',title,'width='+width,' ,scrollWidth='+swidth);
+			if(swidth>width){
+				var bar = title.getElementsByClassName('hc-tab-bar')[0];
+				if(!bar){
+					var span = document.createElement('span');
+					utils.addClass(span,'hc-tab-bar');
+					title.appendChild(span);
+					span.onclick = function(){
+						if(this.title){
+							utils.removeClass(title,'hc-tab-more');
+						}else{
+							utils.addClass(title,'hc-tab-more');
+						}
+						this.title = this.title ? '' : '折叠';
+					}
+				}
+			}else{
+				utils.removeClass(title,'hc-tab-more');
+				var bar = title.getElementsByClassName('hc-tab-bar')[0];
+				if(bar){
+					utils.remove(bar);
+				}
+			}
+		},0);
+	});
+}
+
 
 /*
 全局设置
@@ -257,10 +312,10 @@ Element.prototype.clickTab = function(li){
 }
 
 //删除tab
-Element.prototype.delTab = function(el){
+Element.prototype.delTab = function(li){
 	var that = this;
-	var tab = utils.parents(el,'hc-tab');
-	var li = utils.parent(el);
+	var tab = utils.parents(li,'hc-tab');
+	if( !(tab instanceof HTMLElement) ) return;
 	var index = utils.index(li);
 	var content = tab.getElementsByClassName('hc-tab-item')[index];
 	if( utils.hasClass(li,'hc-tab-this') ){
@@ -274,6 +329,8 @@ Element.prototype.delTab = function(el){
 	}
 	utils.remove(li);
 	utils.remove(content);
+	this.tabAuto();
+	if(that.opt && typeof that.opt.delFn === 'function') that.opt.delFn(li);
 }
 
 //添加tab
@@ -315,12 +372,14 @@ Element.prototype.addTab = function(filter,opt){
 	var content = tarTab.getElementsByClassName('hc-tab-content')[0];
 	title.appendChild(li);
 	content.appendChild(div);
+
+	this.tabAuto();
+
+	return li;
 }
 
 var element = window.element = new Element();
 element.init();
-
-
 
 
 

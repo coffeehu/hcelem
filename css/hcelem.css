@@ -9,10 +9,56 @@
 	margin: 10px 0;
 }
 .hc-tab-title{
+	position: relative;
 	height: 40px;
 	border-bottom: 1px solid #e6e6e6;
 	font-size: 0;
+	white-space: nowrap;
+	overflow: hidden;
 }
+/*展开时 title 的样式*/
+.hc-tab-more{
+	white-space: normal!important;
+	height: auto!important;
+}
+/*展开按钮*/
+.hc-tab-bar{
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 40px;
+	width: 30px;
+	background: #fff;
+	border:1px solid #e6e6e6;
+	cursor: pointer;
+}
+.hc-tab-bar:before{
+	content: " ";
+	position: absolute;
+	top: 15px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin:auto;
+	width: 0px;
+	height: 0px;
+	border: 8px solid transparent;
+	border-top: 11px solid #666;
+}
+.hc-tab-bar:after{
+	content: " ";
+	position: absolute;
+	top: 13px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin:auto;
+	width: 0px;
+	height: 0px;
+	border: 8px solid transparent;
+	border-top: 11px solid #fff;
+}
+/*tab标签页*/
 .hc-tab-title li{
 	position: relative;
 	display: inline-block;
@@ -24,6 +70,7 @@
 	font-size: 14px;
 	cursor: pointer;
 }
+/*tab标签页选中时的样式*/
 .hc-tab-this:after{
 	content: '';
 	position: absolute;
