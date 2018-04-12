@@ -1,4 +1,4 @@
-*{
+.hc-tab *{
 	padding: 0;
 	margin: 0;
 }
@@ -26,37 +26,49 @@
 	position: absolute;
 	top: 0;
 	right: 0;
-	height: 40px;
+	height: 39px;
 	width: 30px;
 	background: #fff;
 	border:1px solid #e6e6e6;
 	cursor: pointer;
 }
-.hc-tab-bar:before{
-	content: " ";
-	position: absolute;
-	top: 15px;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	margin:auto;
-	width: 0px;
-	height: 0px;
-	border: 8px solid transparent;
-	border-top: 11px solid #666;
-}
+.hc-tab-bar:before,
 .hc-tab-bar:after{
 	content: " ";
 	position: absolute;
-	top: 13px;
-	bottom: 0;
 	left: 0;
 	right: 0;
+	bottom: 0;
 	margin:auto;
 	width: 0px;
 	height: 0px;
-	border: 8px solid transparent;
-	border-top: 11px solid #fff;
+	border: 7px solid transparent;
+	-webkit-transition: all .3s;
+   	-moz-transition: all .3s;
+      -o-transition: all .3s;
+         transition: all .3s;
+}
+.hc-tab-bar:before{
+	top: 10px;
+	border-top: 8px solid #000;
+}
+.hc-tab-bar:after{
+	top: 8px;
+	border-top: 8px solid #fff;
+}
+.hc-tab-more .hc-tab-bar:before,
+.hc-tab-more .hc-tab-bar:after{
+	-webkit-transform: rotate(180deg);
+	   -moz-transform: rotate(180deg);
+	    -ms-transform: rotate(180deg);
+	     -o-transform: rotate(180deg);
+		    transform: rotate(180deg);
+}
+.hc-tab-more .hc-tab-bar:before{
+	top:-10px;
+}
+.hc-tab-more .hc-tab-bar:after{
+	top:-8px;
 }
 /*tab标签页*/
 .hc-tab-title li{

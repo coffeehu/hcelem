@@ -223,7 +223,10 @@ Element.prototype.init = function(){
 	});
 
 	// title 高度自适应：tab标签页过多的时候，自动分行
-	that.tabAuto();
+	setTimeout(function(){
+		that.tabAuto();
+	},0)
+	
 	window.onresize = function(){
 		that.tabAuto();
 	}
@@ -233,7 +236,7 @@ Element.prototype.init = function(){
 /*
 	自适应tab栏，当tab标签页太多超出title栏时自动分行
 
-	注意，若是不使用 setTimeout(), scrollWidth 的值 和 clientWidth 值一样！
+	注意，这里打开浏览器第一次渲染页面时，若是不使用 setTimeout(), 发现 scrollWidth 的值 和 clientWidth 值一样！
 	可能是在 js 里加载 css 文件导致的；
 	因为关掉自动载入css，直接在html文件的头部引用css，scrollWidth 获取正常。
 */
@@ -245,33 +248,30 @@ Element.prototype.tabAuto = function(){
 		if(bar){
 			utils.remove(bar);
 		}
-		setTimeout(function(){
-			var width = title.clientWidth;
-			var swidth = title.scrollWidth;
-			console.log('title1',title,'width='+width,' ,scrollWidth='+swidth);
-			if(swidth>width){
-				var bar = title.getElementsByClassName('hc-tab-bar')[0];
-				if(!bar){
-					var span = document.createElement('span');
-					utils.addClass(span,'hc-tab-bar');
-					title.appendChild(span);
-					span.onclick = function(){
-						if(this.title){
-							utils.removeClass(title,'hc-tab-more');
-						}else{
-							utils.addClass(title,'hc-tab-more');
-						}
-						this.title = this.title ? '' : '折叠';
+		var width = title.clientWidth;
+		var swidth = title.scrollWidth;
+		if(swidth>width){
+			var bar = title.getElementsByClassName('hc-tab-bar')[0];
+			if(!bar){
+				var span = document.createElement('span');
+				utils.addClass(span,'hc-tab-bar');
+				title.appendChild(span);
+				span.onclick = function(){
+					if(this.title){
+						utils.removeClass(title,'hc-tab-more');
+					}else{
+						utils.addClass(title,'hc-tab-more');
 					}
-				}
-			}else{
-				utils.removeClass(title,'hc-tab-more');
-				var bar = title.getElementsByClassName('hc-tab-bar')[0];
-				if(bar){
-					utils.remove(bar);
+					this.title = this.title ? '' : '折叠';
 				}
 			}
-		},0);
+		}else{
+			utils.removeClass(title,'hc-tab-more');
+			var bar = title.getElementsByClassName('hc-tab-bar')[0];
+			if(bar){
+				utils.remove(bar);
+			}
+		}
 	});
 }
 
@@ -320,9 +320,10 @@ Element.prototype.delTab = function(li){
 	var content = tab.getElementsByClassName('hc-tab-item')[index];
 	if( utils.hasClass(li,'hc-tab-this') ){
 		var next = utils.next(li);
-		if(next){
+		// 后面还有tab标签页时（注意 next 还有可能是展开按钮：hc-tab-bar),选中后面一个
+		if(next && !utils.hasClass(next,'hc-tab-bar')){
 			that.clickTab(next);
-		}else{
+		}else{ //否则选中前面
 			var prev = utils.prev(li);
 			if(prev) that.clickTab(prev);
 		}
