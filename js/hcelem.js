@@ -185,6 +185,155 @@ var utils = {
 };
 utils.addcss();
 
+/*
+	事件集合，
+	tab 的点击回调、删除回调
+*/
+var events = {};
+
+/*
+	操作集合
+	tab点击、tab删除、tab新增、tab自适应
+*/
+var calls = {
+	tabClick:function(evt){
+		var li = this;
+		//tab标签样式改变
+		utils.addClass(li,'hc-tab-this');
+		var _lis = utils.siblings(li);
+		utils.each(_lis,function(index,li){
+			utils.removeClass(li,'hc-tab-this');
+		})
+
+		//获得点击的<li>的index，根据index确定对应的item内容显示
+		var index = utils.index(li);
+
+		//内容显示切换
+		var _p = utils.parent(li);
+		var _tab = utils.parent(_p);
+		var filter = utils.attr(_tab,'hc-filter');
+		var items = _tab.getElementsByClassName('hc-tab-item');
+		utils.each(items,function(i,item){
+			if(i === index){
+				utils.addClass(item,'hc-show');
+			}else{
+				utils.removeClass(item,'hc-show');
+			}
+		})
+
+		if(events['tabclick'] && events['tabclick'][filter]){
+			events['tabclick'][filter].call(li,evt,index)
+		}
+	},
+	tabDel:function(evt){
+		var li = this;
+		var tab = utils.parents(li,'hc-tab');
+		if( !(tab instanceof HTMLElement) ) return;
+		var index = utils.index(li);
+
+
+		var filter = utils.attr(tab,'hc-filter');
+		if(events['tabdel'] && events['tabdel'][filter]){
+			events['tabdel'][filter].call(li,evt,index)
+		}
+
+
+		var content = tab.getElementsByClassName('hc-tab-item')[index];
+		if( utils.hasClass(li,'hc-tab-this') ){
+			var next = utils.next(li);
+			// 后面还有tab标签页时（注意 next 还有可能是展开按钮：hc-tab-bar),选中后面一个
+			if(next && !utils.hasClass(next,'hc-tab-bar')){
+				//that.tabClick(next);
+				calls.tabClick.call(next);
+			}else{ //否则选中前面
+				var prev = utils.prev(li);
+				/*if(prev) that.tabClick(prev);*/
+				if(prev) calls.tabClick.call(prev);
+			}
+		}
+		utils.remove(li);
+		utils.remove(content);
+		calls.tabAuto();
+	},
+	tabAdd:function(filter,opt){
+		var that = this;
+		var tabs = that.tabs;
+		var tarTab;
+		utils.each(tabs,function(i,tab){
+			var f = utils.attr(tab,'hc-filter');
+			if(f === filter){
+				tarTab = tab;
+				return true;
+			}
+		});
+		
+		//标签是否有删除按钮
+		var close = '';
+		if( utils.attr(tarTab,'hc-tab-close') ){
+			close = '<i class="hc-tab-close">x</i>';
+		}
+		
+		//标签的文本
+		var li = document.createElement('li');
+		li.innerHTML = opt.title+close;
+
+		//内容体
+		var div = document.createElement('div');
+		utils.addClass(div,'hc-tab-item');
+		div.innerHTML = opt.content;
+
+		var title = tarTab.getElementsByClassName('hc-tab-title')[0];
+		var content = tarTab.getElementsByClassName('hc-tab-content')[0];
+		title.appendChild(li);
+		content.appendChild(div);
+
+		calls.tabAuto();
+
+		return li;
+	},
+	/*
+		自适应tab栏，当tab标签页太多超出title栏时自动分行
+
+		注意，这里打开浏览器第一次渲染页面时，若是不使用 setTimeout(), 发现 scrollWidth 的值 和 clientWidth 值一样！
+		可能是在 js 里加载 css 文件导致的；
+		因为关掉自动载入css，直接在html文件的头部引用css，scrollWidth 获取正常。
+	*/
+	tabAuto:function(){
+		var that = this;
+		utils.each(that.titles,function(index,title){
+			utils.removeClass(title,'hc-tab-more');
+			var bar = title.getElementsByClassName('hc-tab-bar')[0];
+			if(bar){
+				utils.remove(bar);
+			}
+			var width = title.clientWidth;
+			var swidth = title.scrollWidth;
+			if(swidth>width){
+				utils.addClass(title,'hc-overflow');
+				var bar = title.getElementsByClassName('hc-tab-bar')[0];
+				if(!bar){
+					var span = document.createElement('span');
+					utils.addClass(span,'hc-tab-bar');
+					title.appendChild(span);
+					span.onclick = function(){
+						if(this.title){
+							utils.removeClass(title,'hc-tab-more');
+						}else{
+							utils.addClass(title,'hc-tab-more');
+						}
+						this.title = this.title ? '' : '折叠';
+					}
+				}
+			}else{
+				utils.removeClass(title,'hc-tab-more hc-overflow');
+				var bar = title.getElementsByClassName('hc-tab-bar')[0];
+				if(bar){
+					utils.remove(bar);
+				}
+			}
+		});
+	}
+};
 
 var Element = function(){
 	this.tabs = document.getElementsByClassName('hc-tab');
@@ -193,21 +342,21 @@ var Element = function(){
 Element.prototype.init = function(){
 	var that = this;
 	//tab的点击切换事件/删除时间
-	var titles = this.titles = document.getElementsByClassName('hc-tab-title');
+	var titles = calls.titles = document.getElementsByClassName('hc-tab-title');
 	utils.each(titles,function(index,title){
 		title.onclick = function(evt){
 			var tar = evt.target;
 			var tagName = tar.tagName.toLowerCase();
 			if( tagName === 'li'){ //点击切换标签
-				that.clickTab(tar);
+				calls.tabClick.call(tar,evt);
 			}else if( utils.hasClass(tar,'hc-tab-close') ){ //删除标签
 				var li = utils.parent(tar);
-				that.delTab(li);
+				calls.tabDel.call(li,evt);
 			}
 		}
 	});
 
-	//判断是否开启删除tab按钮
+	//判断是否开启 tab 的删除按钮
 	var tabs = that.tabs;
 	utils.each(tabs,function(i,tab){
 		if( utils.attr(tab,'hc-tab-close') ){ //如果属性"hc-tab-close"为true，开启删除按钮
@@ -224,114 +373,35 @@ Element.prototype.init = function(){
 
 	// title 高度自适应：tab标签页过多的时候，自动分行
 	setTimeout(function(){
-		that.tabAuto();
+		calls.tabAuto();
 	},0)
 	
 	window.onresize = function(){
-		that.tabAuto();
+		calls.tabAuto();
 	}
 }
 
 
 /*
-	自适应tab栏，当tab标签页太多超出title栏时自动分行
-
-	注意，这里打开浏览器第一次渲染页面时，若是不使用 setTimeout(), 发现 scrollWidth 的值 和 clientWidth 值一样！
-	可能是在 js 里加载 css 文件导致的；
-	因为关掉自动载入css，直接在html文件的头部引用css，scrollWidth 获取正常。
+	eventName：事件名--tabclick,tabdel
+	filter：hc-filter的值
+	fn：回调函数
 */
-Element.prototype.tabAuto = function(){
-	var that = this;
-	utils.each(that.titles,function(index,title){
-		utils.removeClass(title,'hc-tab-more');
-		var bar = title.getElementsByClassName('hc-tab-bar')[0];
-		if(bar){
-			utils.remove(bar);
-		}
-		var width = title.clientWidth;
-		var swidth = title.scrollWidth;
-		if(swidth>width){
-			var bar = title.getElementsByClassName('hc-tab-bar')[0];
-			if(!bar){
-				var span = document.createElement('span');
-				utils.addClass(span,'hc-tab-bar');
-				title.appendChild(span);
-				span.onclick = function(){
-					if(this.title){
-						utils.removeClass(title,'hc-tab-more');
-					}else{
-						utils.addClass(title,'hc-tab-more');
-					}
-					this.title = this.title ? '' : '折叠';
-				}
-			}
-		}else{
-			utils.removeClass(title,'hc-tab-more');
-			var bar = title.getElementsByClassName('hc-tab-bar')[0];
-			if(bar){
-				utils.remove(bar);
-			}
-		}
-	});
+Element.prototype.on = function(eventName,filter,fn){
+	if(!events[eventName]){
+		events[eventName] = {};
+	}
+	events[eventName][filter] = fn;
 }
-
-
-/*
-全局设置
-opt={
-	delFn:fuction //删除时的回调
-}
-*/
-Element.prototype.setTab = function(opt){
-	this.opt = opt;
-}
-
 
 //tab的点击切换
-Element.prototype.clickTab = function(li){
-	//tab标签样式改变
-	utils.addClass(li,'hc-tab-this');
-	var _lis = utils.siblings(li);
-	utils.each(_lis,function(index,li){
-		utils.removeClass(li,'hc-tab-this');
-	})
-
-	//获得点击的<li>的index，根据index确定对应的item内容显示
-	var index = utils.index(li);
-
-	//内容显示切换
-	var _p = utils.parent(li);
-	var items = utils.parent(_p).getElementsByClassName('hc-tab-item');
-	utils.each(items,function(i,item){
-		if(i === index){
-			utils.addClass(item,'hc-show');
-		}else{
-			utils.removeClass(item,'hc-show');
-		}
-	})
+Element.prototype.tabClick = function(li){
+	calls.tabClick.call(li);
 }
 
 //删除tab
-Element.prototype.delTab = function(li){
-	var that = this;
-	var tab = utils.parents(li,'hc-tab');
-	if( !(tab instanceof HTMLElement) ) return;
-	var index = utils.index(li);
-	var content = tab.getElementsByClassName('hc-tab-item')[index];
-	if( utils.hasClass(li,'hc-tab-this') ){
-		var next = utils.next(li);
-		// 后面还有tab标签页时（注意 next 还有可能是展开按钮：hc-tab-bar),选中后面一个
-		if(next && !utils.hasClass(next,'hc-tab-bar')){
-			that.clickTab(next);
-		}else{ //否则选中前面
-			var prev = utils.prev(li);
-			if(prev) that.clickTab(prev);
-		}
-	}
-	utils.remove(li);
-	utils.remove(content);
-	this.tabAuto();
-	if(that.opt && typeof that.opt.delFn === 'function') that.opt.delFn(li);
+Element.prototype.tabDel = function(li){
+	calls.tabDel.call(li);
 }
 
 //添加tab
@@ -342,41 +412,8 @@ opt={
 	content:内容
 }
 */
-Element.prototype.addTab = function(filter,opt){
-	var that = this;
-	var tabs = that.tabs;
-	var tarTab;
-	utils.each(tabs,function(i,tab){
-		var f = utils.attr(tab,'hc-filter');
-		if(f === filter){
-			tarTab = tab;
-			return true;
-		}
-	});
-	
-	//标签是否有删除按钮
-	var close = '';
-	if( utils.attr(tarTab,'hc-tab-close') ){
-		close = '<i class="hc-tab-close">x</i>';
-	}
-	
-	//标签的文本
-	var li = document.createElement('li');
-	li.innerHTML = opt.title+close;
-
-	//内容体
-	var div = document.createElement('div');
-	utils.addClass(div,'hc-tab-item');
-	div.innerHTML = opt.content;
-
-	var title = tarTab.getElementsByClassName('hc-tab-title')[0];
-	var content = tarTab.getElementsByClassName('hc-tab-content')[0];
-	title.appendChild(li);
-	content.appendChild(div);
-
-	this.tabAuto();
-
-	return li;
+Element.prototype.tabAdd = function(filter,opt){
+	return calls.tabAdd(filter.opt);
 }
 
 var element = window.element = new Element();

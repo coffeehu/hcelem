@@ -5,6 +5,9 @@
 .hc-show{
 	display: block!important;
 }
+.hc-overflow{
+	overflow: hidden!important;
+}
 .hc-tab{
 	margin: 10px 0;
 }
@@ -14,7 +17,7 @@
 	border-bottom: 1px solid #e6e6e6;
 	font-size: 0;
 	white-space: nowrap;
-	overflow: hidden;
+	/*overflow: hidden;*/
 }
 /*展开时 title 的样式*/
 .hc-tab-more{

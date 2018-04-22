@@ -38,7 +38,7 @@
 		</div>
 	</div>
 
-	<div class="hc-tab">
+	<div class="hc-tab" hc-filter="two">
 	  <ul class="hc-tab-title">
 	    <li class="hc-tab-this">网站设置</li>
 	    <li>coffee</li>
@@ -63,6 +63,12 @@
 		title:'addtest',
 		content:'this is just a addtest'
 	})*/
+	element.on('tabclick','one',function(evt,index){
+		console.log('i click!',this,evt,index);
+	})
+	element.on('tabdel','one',function(evt,index){
+		console.log('i delete it!',this,evt,index);
+	})
 </script>
 </body>
 </html>
