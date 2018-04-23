@@ -114,9 +114,10 @@
 	color: #fff;
 	border-radius: 2px;
 }
+/*内容*/
 .hc-tab-content{
 	padding: 10px;
 }
-.hc-tab-item{
+.hc-tab-content > .hc-tab-content-item{
 	display: none;
 }

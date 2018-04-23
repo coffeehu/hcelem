@@ -27,14 +27,14 @@
 			<li>game over</li>
 		</ul>
 		<div class="hc-tab-content">
-			<div class="hc-tab-item hc-show">1</div>
-			<div class="hc-tab-item">2</div>
-			<div class="hc-tab-item">3</div>
-			<div class="hc-tab-item">4</div>
-			<div class="hc-tab-item">5</div>
-			<div class="hc-tab-item">6</div>
-			<div class="hc-tab-item">7</div>
-			<div class="hc-tab-item">8</div>
+			<div class="hc-tab-content-item hc-show">1</div>
+			<div class="hc-tab-content-item">2</div>
+			<div class="hc-tab-content-item">3</div>
+			<div class="hc-tab-content-item">4</div>
+			<div class="hc-tab-content-item">5</div>
+			<div class="hc-tab-content-item">6</div>
+			<div class="hc-tab-content-item">7</div>
+			<div class="hc-tab-content-item">8</div>
 		</div>
 	</div>
 
@@ -47,13 +47,15 @@
 	    <li>apple</li>
 	  </ul>
 	  <div class="hc-tab-content">
-	    <div class="hc-tab-item hc-show">1</div>
-	    <div class="hc-tab-item">2</div>
-	    <div class="hc-tab-item">3</div>
-	    <div class="hc-tab-item">4</div>
-	    <div class="hc-tab-item">5</div>
+	    <div class="hc-tab-content-item hc-show">1</div>
+	    <div class="hc-tab-content-item">2</div>
+	    <div class="hc-tab-content-item">3</div>
+	    <div class="hc-tab-content-item">4</div>
+	    <div class="hc-tab-content-item">5</div>
 	  </div>
 	</div>
+
+	<button id="test">add tab in one</button>
 
 </div>
 
@@ -69,6 +71,18 @@
 	element.on('tabdel','one',function(evt,index){
 		console.log('i delete it!',this,evt,index);
 	})
+
+	element.on('tabadd','one',function(el){
+		console.log('add a new tab item!',el)
+	})
+
+	var test = document.getElementById('test');
+	test.onclick = function(){
+		element.tabAdd('one',{
+			title:'new tab',
+			content:'<h1>new content</h1'
+		})
+	}
 </script>
 </body>
 </html>
