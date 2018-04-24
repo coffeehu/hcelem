@@ -5,21 +5,22 @@
 	<title></title>
 	<style type="text/css">
 		.container{
-			position: absolute;
-			top: 10%;
-			left: 10%;
+			padding: 20px;
 			width: 40%;
+		}
+		.container2{
+			width: 60%;
 		}
 
 	</style>
 </head>
 <body>
 
+<!-- 选项卡 -->
 <div class="container">
-
 	<div class="hc-tab" hc-tab-close="true" hc-filter="one">
 		<ul class="hc-tab-title">
-			<li class="hc-tab-this">apple</li>
+			<li class="hc-active">apple</li>
 			<li>coffee</li>
 			<li>juice</li>
 			<li>ice cream</li>
@@ -42,7 +43,7 @@
 
 	<div class="hc-tab" hc-filter="two">
 	  <ul class="hc-tab-title">
-	    <li class="hc-tab-this">网站设置</li>
+	    <li class="hc-active">网站设置</li>
 	    <li>coffee</li>
 	    <li>tea</li>
 	    <li>milk</li>
@@ -58,10 +59,14 @@
 	</div>
 
 	<button id="test">add tab in one</button>
+</div>
 
-	<ul class="hc-nav">
+
+<!-- 菜单导航栏 -->
+<div class="container2">
+	<ul class="hc-nav" hc-filter="nav-one" >
 		<li>处理中心</li>
-		<li class="is-active">
+		<li class="hc-active">
 			<div>我的工作台</div>
 			<ul class="hc-nav-child">
 				<li>选项1</li>
@@ -79,12 +84,12 @@
 				<li>选项4</li>
 			</ul>
 		</li>
-		<li>长一点的名字试试吧</li>
+		<li><a href="">长一点的名字试试吧</a></li>
 	</ul>
 
 	<ul class="hc-nav">
 		<li>处理中心</li>
-		<li class="is-active">
+		<li class="hc-active">
 			<div>我的工作台</div>
 			<ul class="hc-nav-child">
 				<li>选项1</li>
@@ -97,7 +102,22 @@
 		<li>长一点的名字试试吧</li>
 	</ul>
 
+	<br>
 
+	<ul class="hc-nav hc-nav-vertical">
+		<li>处理中心</li>
+		<li class="hc-active">
+			<div>我的工作台</div>
+			<ul class="hc-nav-child">
+				<li>选项1</li>
+				<li>选项2</li>
+				<li>选项3</li>
+				<li>选项4</li>
+			</ul>
+		</li>
+		<li>订单中心</li>
+		<li>长一点的名字试试吧</li>
+	</ul>
 </div>
 
 <script src="./js/hcelem.js"></script>
@@ -126,6 +146,10 @@
 			content:'<h1>new content</h1'
 		})
 	}
+
+	element.on('navclick','nav-one',function(evt){
+		console.log('click a nav!',this,evt)
+	})
 </script>
 </body>
 </html>

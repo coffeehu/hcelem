@@ -28,8 +28,10 @@
 	padding-left: 30px;
 	border-bottom: 1px solid #eee;
 	list-style: none;
+	color: #909399;
 	background: #fff;
 }
+/*一级菜单导航栏item*/
 .hc-nav > li{
 	float: left;
 	position: relative;
@@ -38,28 +40,39 @@
 	box-sizing: border-box;
 	padding:0 20px;
 	font-size: 14px;
-	color: #909399;
 	white-space: nowrap;
 	cursor: pointer;
 }
-.hc-nav > li:hover{
+.hc-nav > li:hover,
+.hc-nav > li:hover > a{
 	color: #303133;
 }
-.hc-nav > li.is-active{
+.hc-nav > li.hc-active{
 	border-bottom: 2px solid #409eff;
 	color: #303133;
 }
-.hc-icon-arrow-down{
+.hc-nav > li > a{
+	text-decoration: none;
+	color: #909399;
+}
+/*箭头*/
+.hc-icon-arrow{
 	display: inline-block;
 	position: relative;
 	vertical-align: middle;
 	margin-left: 8px;
-	margin-top: -8px;
 	width: 6px;
 	height: 6px;
 	border-bottom: 1px solid #909399;
-	border-right: 1px solid #909399;
+	border-right: 1px solid #909399;	
+}
+.hc-icon-arrow-down{
+	margin-top: -8px;
 	transform: rotate(45deg);
+}
+.hc-icon-arrow-up{
+	margin-top: 0px;
+	transform: rotate(-135deg);
 }
 /*二级菜单栏*/
 .hc-nav ul.hc-nav-child{
@@ -79,13 +92,48 @@
 	padding: 0 20px;
 	color: #303133;
 }
-.hc-nav ul.hc-nav-child li.is-active{
-	background: #409eff;
-	color: #fff;
+.hc-nav ul.hc-nav-child li.hc-active{
+	color: #409eff;
 }
 .hc-nav ul.hc-nav-child li:hover{
 	background: #eee;
+	color: #303133;
 }
+/*垂直方面的菜单导航栏*/
+.hc-nav-vertical{
+	width: 200px;
+	padding: 0;
+	background: rgb(84, 92, 100);
+	color: #fff;
+}
+.hc-nav-vertical li{
+	display: block;
+	width: 100%;
+	height: auto;
+}
+.hc-nav-vertical li:hover{
+	background: #4E5465;
+}
+.hc-nav-vertical > li.hc-active{
+	border-bottom: none;
+}
+.hc-nav-vertical ul.hc-nav-child{
+	display: block;
+	border:none;
+	box-shadow: none;
+	background: rgb(67, 74, 80);
+}
+.hc-nav-vertical ul.hc-nav-child li{
+	box-sizing: border-box;
+}
+.hc-nav-vertical .hc-icon-arrow{
+	float: right;
+	margin-top: 23px;
+}
+.hc-nav-vertical .hc-icon-arrow-up{
+	margin-top: 28px;
+}
+
 
 /*################ 选项卡 ###############*/
 .hc-tab *{
@@ -170,6 +218,18 @@
 	cursor: pointer;
 }
 /*tab标签页选中时的样式*/
+.hc-tab-title li.hc-active:after{
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 41px;
+	border: 1px solid #e6e6e6;
+	border-bottom: 1px solid #fff;
+	box-sizing: border-box;
+	pointer-events: none;
+}
 .hc-tab-this:after{
 	content: '';
 	position: absolute;
