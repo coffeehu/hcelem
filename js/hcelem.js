@@ -137,6 +137,29 @@ var utils = {
 		}
 		return el;
 	},
+	children(elem,filter){
+		var node = elem.firstChild;
+		var children = [];
+		var matchFn = function(node,filter){
+			if(!filter) return true;
+
+			if( filter.match(/^\./) ){ // 为class
+				return node.className === filter.replace('.','');
+			}else if( filter.match(/^\#/) ){ // 为id
+				return node.id === filter.replace('#','');
+			}else{ // 为tagName
+				return node.tagName.toLowerCase() === filter;
+			}
+		}
+		for(;node;node=node.nextSibling){
+			if(node.nodeType === 1){
+				if( matchFn(node,filter) ){
+					children.push(node);
+				}
+			}
+		}
+		return children;
+	},
 	parent:function(elem){
 		var parent = elem.parentNode;
 		return parent && parent.nodeType !== 11 ? parent:null;
@@ -198,6 +221,30 @@ var events = {};
 	tab点击、tab删除、tab新增、tab自适应
 */
 var calls = {
+	navClick:function(evt){
+		var nav = this; //选中的菜单导航元素
+		var target = evt.target;
+		var childNav; //选中的二级菜单栏元素
+		var _navs = utils.siblings(nav);
+		utils.each(_navs,function(index,_nav){
+			utils.removeClass(_nav,'is-active');
+		})
+		utils.addClass(nav,'is-active');
+
+
+		//判断点击的是否是二级菜单栏
+		var _p = utils.parent(target);
+		if(utils.hasClass(_p,'hc-nav-child')){
+			childNav = target;
+
+			var _childNaves = utils.siblings(childNav);
+			utils.each(_childNaves,function(index,_childNav){
+				utils.removeClass(_childNav,'is-active');
+			});
+			utils.addClass(childNav,'is-active');
+			utils.removeClass(_p,'hc-show');
+		}
+	},
 	tabClick:function(evt){
 		var li = this;
 		//tab标签样式改变
@@ -346,6 +393,56 @@ var calls = {
 
 
 var views = {
+
+	//菜单导航栏初始化
+	nav:function(){
+		views.naves  = document.getElementsByClassName('hc-nav');
+
+		utils.each(views.naves,function(index,nav){
+			
+			//导航栏的鼠标悬停事件（若有二级菜单，则弹出）
+			var navItems = utils.children(nav,'li');
+			utils.each(navItems,function(index,navItem){
+				var child = utils.children(navItem,'.hc-nav-child')[0];
+				var timeId;
+				if(child){ //有二级菜单时
+
+					//名称旁加一个箭头按钮
+					var _title = utils.prev(child);
+					var arrow = document.createElement('i');
+					utils.addClass(arrow,'hc-icon-arrow-down');
+					_title.appendChild(arrow);
+
+					navItem.onmouseenter = function(){
+						if(timeId) clearTimeout(timeId);
+
+						//不是当前选中的navItem，还原其二级菜单的样式（即：去掉选中的样式）
+						if( !utils.hasClass(navItem,'is-active') ){
+							var _childNaves = utils.children(child,'li');
+							utils.each(_childNaves,function(index,_childNav){
+								utils.removeClass(_childNav,'is-active');
+							});
+						}
+
+						timeId = setTimeout(function(){
+							utils.addClass(child,'hc-show');
+						},300);
+					};
+					navItem.onmouseleave = function(){
+						if(timeId) clearTimeout(timeId);
+						timeId = setTimeout(function(){
+							utils.removeClass(child,'hc-show');
+						},300);
+					};
+				}
+				//点击事件
+				navItem.onclick = function(evt){
+					calls.navClick.call(this,evt);
+				};
+			})
+		})
+	},
+
 	//选项卡初始化
 	tab:function(){
 		views.tabs  = document.getElementsByClassName('hc-tab');
@@ -379,6 +476,7 @@ var views = {
 			}
 		});
 	}
+
 }
 
 var Element = function(){
@@ -395,7 +493,6 @@ Element.prototype.init = function(){
 	}
 
 	// title 高度自适应：tab标签页过多的时候，自动分行
-	calls.tabAuto();
 	document.onreadystatechange = function(){
 		if(document.readyState == 'complete'){
 			calls.tabAuto();

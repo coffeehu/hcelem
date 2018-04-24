@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="utf-8">
 	<title></title>
 	<style type="text/css">
 		.container{
@@ -9,6 +10,7 @@
 			left: 10%;
 			width: 40%;
 		}
+
 	</style>
 </head>
 <body>
@@ -57,10 +59,51 @@
 
 	<button id="test">add tab in one</button>
 
+	<ul class="hc-nav">
+		<li>处理中心</li>
+		<li class="is-active">
+			<div>我的工作台</div>
+			<ul class="hc-nav-child">
+				<li>选项1</li>
+				<li>选项2</li>
+				<li>选项3</li>
+				<li>选项4</li>
+			</ul>
+		</li>
+		<li>
+			<div>订单中心</div>
+			<ul class="hc-nav-child">
+				<li>选项1</li>
+				<li>选项2</li>
+				<li>选项3</li>
+				<li>选项4</li>
+			</ul>
+		</li>
+		<li>长一点的名字试试吧</li>
+	</ul>
+
+	<ul class="hc-nav">
+		<li>处理中心</li>
+		<li class="is-active">
+			<div>我的工作台</div>
+			<ul class="hc-nav-child">
+				<li>选项1</li>
+				<li>选项2</li>
+				<li>选项3</li>
+				<li>选项4</li>
+			</ul>
+		</li>
+		<li>订单中心</li>
+		<li>长一点的名字试试吧</li>
+	</ul>
+
+
 </div>
 
 <script src="./js/hcelem.js"></script>
 <script type="text/javascript">
+
+
 	/*element.addTab('one',{
 		title:'addtest',
 		content:'this is just a addtest'

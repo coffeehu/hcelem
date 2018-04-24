@@ -1,12 +1,96 @@
-.hc-tab *{
-	padding: 0;
-	margin: 0;
-}
+
 .hc-show{
 	display: block!important;
 }
 .hc-overflow{
 	overflow: hidden!important;
+}
+/*################ 菜单导航 ###############*/
+/*
+灰色字体-未选中-#909399
+蓝色字体-选中-#409eff
+*/
+.hc-nav,
+.hc-nav *{
+	margin: 0;
+	padding: 0;
+}
+.hc-nav:before,
+.hc-nav:after{
+	display: table;
+	content: " ";
+}
+.hc-nav:after{
+	clear: both;
+}
+.hc-nav{
+	position: relative;
+	padding-left: 30px;
+	border-bottom: 1px solid #eee;
+	list-style: none;
+	background: #fff;
+}
+.hc-nav > li{
+	float: left;
+	position: relative;
+	height: 60px;
+	line-height: 60px;
+	box-sizing: border-box;
+	padding:0 20px;
+	font-size: 14px;
+	color: #909399;
+	white-space: nowrap;
+	cursor: pointer;
+}
+.hc-nav > li:hover{
+	color: #303133;
+}
+.hc-nav > li.is-active{
+	border-bottom: 2px solid #409eff;
+	color: #303133;
+}
+.hc-icon-arrow-down{
+	display: inline-block;
+	position: relative;
+	vertical-align: middle;
+	margin-left: 8px;
+	margin-top: -8px;
+	width: 6px;
+	height: 6px;
+	border-bottom: 1px solid #909399;
+	border-right: 1px solid #909399;
+	transform: rotate(45deg);
+}
+/*二级菜单栏*/
+.hc-nav ul.hc-nav-child{
+	display: none;
+	position: relative;
+	z-index: 1;
+	margin: 0 -20px;
+	margin-top: 5px;
+	list-style: none;
+	border:1px solid #e2e2e2;
+	box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+	background: #fff;
+}
+.hc-nav ul.hc-nav-child li{
+	height: 36px;
+	line-height: 36px;
+	padding: 0 20px;
+	color: #303133;
+}
+.hc-nav ul.hc-nav-child li.is-active{
+	background: #409eff;
+	color: #fff;
+}
+.hc-nav ul.hc-nav-child li:hover{
+	background: #eee;
+}
+
+/*################ 选项卡 ###############*/
+.hc-tab *{
+	padding: 0;
+	margin: 0;
 }
 .hc-tab{
 	margin: 10px 0;
