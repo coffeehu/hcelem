@@ -284,39 +284,59 @@ var events = {};
 */
 var calls = {
 	navClick:function(evt){
-		var nav = this; //选中的一级菜单导航元素
+		var navItem = this; //选中的一级菜单导航元素
+		var nav = utils.parent(navItem); 
 		var target = evt.target;
-		var targetNav; //选中的菜单导航元素
+		var targetNavItem; //选中的菜单导航元素
 
-		var checkIt = function(nav){
-			var _navs = utils.siblings(nav);
-			utils.each(_navs,function(index,_nav){
-				utils.removeClass(_nav,'hc-active');
-			})
-			utils.addClass(nav,'hc-active');
+		var textColor = utils.attr(nav,'hc-text-color'); //文字颜色
+		var textColorActive = utils.attr(nav,'hc-text-color-active'); //选中的文字颜色
+
+		var checkIt = function(navItem){
+			var _navItems = utils.siblings(navItem);
+
+			if(textColorActive){
+				utils.each(_navItems,function(index,_navItem){
+					utils.removeClass(_navItem,'hc-active');
+					utils.css(_navItem,{'color':textColor});
+				})
+				utils.addClass(navItem,'hc-active');
+				utils.css(navItem,{'color':textColorActive, 'border-bottom-color':textColorActive});
+			}else{
+				utils.each(_navItems,function(index,_navItem){
+					utils.removeClass(_navItem,'hc-active');
+				})
+				utils.addClass(navItem,'hc-active');
+			}
+			
 		}
 
 		//判断点击的是否是二级菜单栏
 		var _p = utils.parent(target);
 		if( utils.hasClass(_p,'hc-nav-child') ){ //是二级菜单栏
-			targetNav = target;
+			targetNavItem = target;
 			checkIt(target);
-			var nav = utils.parent(_p);
-			checkIt(nav);
+			var navItem = utils.parent(_p);
+			checkIt(navItem);
 			utils.removeClass(_p,'hc-show');
 		}else{ //是一级菜单栏
-			targetNav = nav;
-			if( utils.children(nav,'.hc-nav-child')[0] ){ //有二级菜单栏
+			targetNavItem = navItem;
+			if( utils.children(navItem,'.hc-nav-child')[0] ){ //有二级菜单栏
+				if( utils.hasClass(navItem,'hc-nav-expand') ){
+					utils.removeClass(navItem,'hc-nav-expand');
+				}else{
+					utils.addClass(navItem,'hc-nav-expand');	
+				}
 				return;
 			}else{ //无二级菜单栏，直接点击
-				checkIt(nav);
+				checkIt(navItem);
 			}
 		}
 
 		//触发回调事件
-		var filter = utils.attr( utils.parent(nav), 'hc-filter');
+		var filter = utils.attr( utils.parent(navItem), 'hc-filter');
 		if(events['navclick'] && events['navclick'][filter]){
-			events['navclick'][filter].call(targetNav,evt);
+			events['navclick'][filter].call(targetNavItem,evt);
 		}
 
 	},
@@ -477,16 +497,23 @@ var views = {
 
 			var background = utils.attr(nav,'hc-background'), //背景颜色
 				textColor = utils.attr(nav,'hc-text-color'); //文字颜色
-				//textColorActive = utils.attr(nav,'hc-text-color-active'); //选中的文字颜色
 			
 			if(background){
 				utils.css(nav,{background:background});
+				var childrenNav = nav.getElementsByClassName('hc-nav-child');
+				utils.each(childrenNav,function(index,childNav){
+					utils.css(childNav,{'background':background});
+				})
 			}
 			if(textColor){
 				utils.css(nav,{color:textColor});
 			}
 			
-			//导航栏的鼠标悬停事件（若有二级菜单，则弹出）
+			/*
+			对于默认菜单栏（水平）的鼠标悬停事件（若有二级菜单，则弹出）;
+			对于垂直菜单栏，鼠标悬停时不做处理。
+			*/
+			var isVertical = utils.hasClass(nav,'hc-nav-vertical');
 			var navItems = utils.children(nav,'li');
 			utils.each(navItems,function(index,navItem){
 				var child = utils.children(navItem,'.hc-nav-child')[0];
@@ -499,6 +526,7 @@ var views = {
 					_title.appendChild(arrow);
 
 					navItem.onmouseenter = function(){
+						if(isVertical) return false;
 						if(timeId) clearTimeout(timeId);
 
 						//箭头向下
@@ -517,6 +545,7 @@ var views = {
 						},300);
 					};
 					navItem.onmouseleave = function(){
+						if(isVertical) return false;
 						if(timeId) clearTimeout(timeId);
 
 						//箭头向上

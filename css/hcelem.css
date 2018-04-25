@@ -104,7 +104,6 @@
 	width: 200px;
 	padding: 0;
 	background: rgb(84, 92, 100);
-	color: #fff;
 }
 .hc-nav-vertical li{
 	display: block;
@@ -112,13 +111,18 @@
 	height: auto;
 }
 .hc-nav-vertical li:hover{
-	background: #4E5465;
+	/*background: #4E5465;*/
+}
+.hc-nav-vertical > li:hover,
+.hc-nav-vertical > li:hover > a{
+	color: #fff;
 }
 .hc-nav-vertical > li.hc-active{
 	border-bottom: none;
+	color: #fff;
 }
+/*二级菜单*/
 .hc-nav-vertical ul.hc-nav-child{
-	display: block;
 	border:none;
 	box-shadow: none;
 	background: rgb(67, 74, 80);
@@ -126,6 +130,14 @@
 .hc-nav-vertical ul.hc-nav-child li{
 	box-sizing: border-box;
 }
+/*展开样式*/
+.hc-nav-vertical li.hc-nav-expand{
+	color: #fff;
+}
+.hc-nav-vertical li.hc-nav-expand .hc-nav-child{
+	display: block;
+}
+/*箭头*/
 .hc-nav-vertical .hc-icon-arrow{
 	float: right;
 	margin-top: 23px;
