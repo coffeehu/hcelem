@@ -266,6 +266,29 @@ var utils = {
 				if( fn.call(obj[key],key,obj[key]) ) break;
 			}
 		}
+	},
+	/*16进制颜色转为RGB格式*/  
+	toRgb:function(value){  //十六进制颜色值的正则表达式  
+		var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;  
+	    var sColor = value.toLowerCase();  
+	    if(sColor && reg.test(sColor)){  
+	        if(sColor.length === 4){  
+	            var sColorNew = "#";  
+	            for(var i=1; i<4; i+=1){
+	                sColorNew += sColor.slice(i,i+1).concat(sColor.slice(i,i+1));     
+	            }  
+	            sColor = sColorNew;  
+	        }  
+	        //处理六位的颜色值  
+	        var sColorChange = [];  
+	        for(var i=1; i<7; i+=2){ 
+	            //sColorChange.push(parseInt("0x"+sColor.slice(i,i+2)));
+	            sColorChange.push( parseInt("0x"+sColor.slice(i,i+2))-(16+i) );
+	        }  
+	        return "rgb(" + sColorChange.join(",") + ")";  
+	    }else{  
+	        return sColor;    
+	    }  
 	}
 };
 utils.addcss();
@@ -308,7 +331,6 @@ var calls = {
 				})
 				utils.addClass(navItem,'hc-active');
 			}
-			
 		}
 
 		//判断点击的是否是二级菜单栏
@@ -319,6 +341,9 @@ var calls = {
 			var navItem = utils.parent(_p);
 			checkIt(navItem);
 			utils.removeClass(_p,'hc-show');
+			/*setTimeout(function(){
+				utils.removeClass(_p,'hc-show');
+			},150);*/
 		}else{ //是一级菜单栏
 			targetNavItem = navItem;
 			if( utils.children(navItem,'.hc-nav-child')[0] ){ //有二级菜单栏
@@ -387,11 +412,9 @@ var calls = {
 			var next = utils.next(li);
 			// 后面还有tab标签页时（注意 next 还有可能是展开按钮：hc-tab-bar),选中后面一个
 			if(next && !utils.hasClass(next,'hc-tab-bar')){
-				//that.tabClick(next);
 				calls.tabClick.call(next);
 			}else{ //否则选中前面
 				var prev = utils.prev(li);
-				/*if(prev) that.tabClick(prev);*/
 				if(prev) calls.tabClick.call(prev);
 			}
 		}
@@ -495,67 +518,115 @@ var views = {
 
 		utils.each(views.naves,function(index,nav){
 
-			var background = utils.attr(nav,'hc-background'), //背景颜色
-				textColor = utils.attr(nav,'hc-text-color'); //文字颜色
-			
+			var childrenNav = nav.getElementsByClassName('hc-nav-child');
+			/*设置自定义的样式*/
+			var background = nav.background = utils.attr(nav,'hc-background'), //背景颜色
+				textColor = nav.textColor = utils.attr(nav,'hc-text-color'), //文字颜色
+				textColorActive = nav.textColorActive = utils.attr(nav,'hc-text-color-active'); //选中的文字颜色
+			var backgroundHover; //鼠标悬停时的background（变为比原来的颜色深);
+
 			if(background){
+				//菜单栏的背景设置
 				utils.css(nav,{background:background});
-				var childrenNav = nav.getElementsByClassName('hc-nav-child');
+				//获得鼠标悬停时的background颜色（变为比原来的颜色深);
+				console.log('background',background, utils.toRgb(background))
+				backgroundHover = utils.toRgb(background);
+				//二级菜单栏的背景也设为background
 				utils.each(childrenNav,function(index,childNav){
 					utils.css(childNav,{'background':background});
 				})
 			}
 			if(textColor){
+				utils.addClass(nav,'hc-nav-custom'); //给菜单栏nav添加标签
+				//设置菜单的color，这影响到 navItem 的文字颜色
 				utils.css(nav,{color:textColor});
+				//设置二级菜单的color
+				utils.each(childrenNav,function(index,childNav){
+					utils.css( childNav,{'color':textColor} );
+				})
 			}
 			
-			/*
-			对于默认菜单栏（水平）的鼠标悬停事件（若有二级菜单，则弹出）;
-			对于垂直菜单栏，鼠标悬停时不做处理。
-			*/
-			var isVertical = utils.hasClass(nav,'hc-nav-vertical');
+			var isVertical = utils.hasClass(nav,'hc-nav-vertical');			
+			/*遍历 navItem 做一些处理*/
 			var navItems = utils.children(nav,'li');
 			utils.each(navItems,function(index,navItem){
-				var child = utils.children(navItem,'.hc-nav-child')[0];
+				var child = utils.children(navItem,'.hc-nav-child')[0]; //二级菜单栏
+				var arrow; //箭头
 				var timeId;
-				if(child){ //有二级菜单时
-					//名称旁加一个箭头按钮
+
+				//名称旁加一个箭头按钮
+				if(child){
 					var _title = utils.prev(child);
-					var arrow = document.createElement('i');
+					arrow = document.createElement('i');
 					utils.addClass(arrow,'hc-icon-arrow hc-icon-arrow-down');
 					_title.appendChild(arrow);
+					var _childNavItems = utils.children(child,'li');
+					utils.each(_childNavItems,function(index,_childNavItem){
+						_childNavItem.onmouseenter = function(){
+							utils.css(_childNavItem,{'background':backgroundHover});
+						};
+						_childNavItem.onmouseleave = function(){
+							utils.css(_childNavItem,{'background':'none'});	
+						};
+					});
+				}
 
-					navItem.onmouseenter = function(){
-						if(isVertical) return false;
-						if(timeId) clearTimeout(timeId);
+				//自定样式的处理
+				if(textColorActive){
+					if( utils.hasClass(navItem,'hc-active') ){ //选中的样式
+						utils.css(navItem,{'color':textColorActive, 'border-bottom-color':textColorActive});
+					}
+				}
 
+				/*
+				悬停的处理
+				对于默认菜单栏（水平）的鼠标悬停事件（若有二级菜单，则弹出）;
+				对于垂直菜单栏，鼠标悬停时不做处理。
+				*/
+				navItem.onmouseenter = function(){
+					if(isVertical) return false;
+					if(timeId) clearTimeout(timeId);
+
+					//设置自定义悬停样式
+					utils.css(navItem,{'background':backgroundHover});
+
+					//有二级菜单栏时
+					if(child){
 						//箭头向下
 						utils.addClass(arrow,'hc-icon-arrow-up');
-
 						//不是当前选中的navItem，还原其二级菜单的样式（即：去掉选中的样式）
 						if( !utils.hasClass(navItem,'hc-active') ){
-							var _childNaves = utils.children(child,'li');
-							utils.each(_childNaves,function(index,_childNav){
-								utils.removeClass(_childNav,'hc-active');
+							var _childNavItems = utils.children(child,'li');
+							utils.each(_childNavItems,function(index,_childNavItem){
+								utils.removeClass(_childNavItem,'hc-active');
+								if(textColor){
+									utils.css(_childNavItem,{'color':textColor});
+								}
 							});
 						}
-
+						//显示二级菜单栏
 						timeId = setTimeout(function(){
 							utils.addClass(child,'hc-show');
 						},300);
-					};
-					navItem.onmouseleave = function(){
-						if(isVertical) return false;
-						if(timeId) clearTimeout(timeId);
+					}
+				};
+				navItem.onmouseleave = function(){
+					if(isVertical) return false;
+					if(timeId) clearTimeout(timeId);
 
+					//设置自定义悬停样式
+					utils.css(navItem,{'background':'none'});
+
+					if(child){
 						//箭头向上
 						utils.removeClass(arrow,'hc-icon-arrow-up');
-
+						//二级菜单栏隐藏
 						timeId = setTimeout(function(){
 							utils.removeClass(child,'hc-show');
 						},300);
-					};
-				}
+					}
+				};
+
 				//点击事件
 				navItem.onclick = function(evt){
 					calls.navClick.call(this,evt);

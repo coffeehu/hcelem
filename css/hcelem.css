@@ -43,17 +43,30 @@
 	white-space: nowrap;
 	cursor: pointer;
 }
+/*li里面可以嵌入一个a标签*/
+.hc-nav > li > a{
+	text-decoration: none;
+	color: inherit;
+}
+/*默认悬停样式*/
 .hc-nav > li:hover,
 .hc-nav > li:hover > a{
 	color: #303133;
 }
+/*自定义样式时，关闭默认悬停样式*/
+.hc-nav.hc-nav-custom > li:hover,
+.hc-nav.hc-nav-custom > li:hover > a{
+	color: inherit;
+}
+/*默认选中样式*/
 .hc-nav > li.hc-active{
 	border-bottom: 2px solid #409eff;
 	color: #303133;
 }
-.hc-nav > li > a{
-	text-decoration: none;
-	color: #909399;
+/*自定义样式时，关闭默认选中样式*/
+.hc-nav.hc-nav-custom > li.hc-active{
+	border-bottom:2px solid transparent;
+	color: inherit;
 }
 /*箭头*/
 .hc-icon-arrow{
@@ -85,21 +98,24 @@
 	border:1px solid #e2e2e2;
 	box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
 	background: #fff;
+	color: #909399;
 }
 .hc-nav ul.hc-nav-child li{
 	height: 36px;
 	line-height: 36px;
 	padding: 0 20px;
+}
+.hc-nav ul.hc-nav-child li:hover{
 	color: #303133;
+}
+/*自定义样式时，关闭默认悬停样式*/
+.hc-nav.hc-nav-custom ul.hc-nav-child li:hover{
+	color: inherit;
 }
 .hc-nav ul.hc-nav-child li.hc-active{
 	color: #409eff;
 }
-.hc-nav ul.hc-nav-child li:hover{
-	background: #eee;
-	color: #303133;
-}
-/*垂直方面的菜单导航栏*/
+/*-------------垂直方面的菜单导航栏---------*/
 .hc-nav-vertical{
 	width: 200px;
 	padding: 0;
