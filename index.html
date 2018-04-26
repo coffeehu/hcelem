@@ -16,8 +16,9 @@
 </head>
 <body>
 
-<!-- 选项卡 -->
+<!-- ##################### 选项卡 ###################### -->
 <div class="container">
+	<!-- 可删除的选项卡 -->
 	<div class="hc-tab" hc-tab-close="true" hc-filter="one">
 		<ul class="hc-tab-title">
 			<li class="hc-active">apple</li>
@@ -41,6 +42,7 @@
 		</div>
 	</div>
 
+	<!-- 普通选项卡 -->
 	<div class="hc-tab" hc-filter="two">
 	  <ul class="hc-tab-title">
 	    <li class="hc-active">网站设置</li>
@@ -62,16 +64,18 @@
 </div>
 
 
-<!-- 菜单导航栏 -->
+<!-- ##################### 菜单导航栏 ###################### -->
 <div class="container2">
+
+	<!-- 自定义颜色 -->
 	<ul class="hc-nav" hc-filter="nav-one"
 	hc-background="#545963" hc-text-color="#fff" hc-text-color-active="#ffd04b">
 		<li>处理中心</li>
-		<li class="hc-active">
+		<li>
 			<div>我的工作台</div>
 			<ul class="hc-nav-child">
 				<li>选项1</li>
-				<li>选项2</li>
+				<li class="hc-active">选项2</li>
 				<li>选项3</li>
 				<li>选项4</li>
 			</ul>
@@ -88,12 +92,39 @@
 		<li><a href="http://www.baidu.com" target="_blank">长一点的名字试试吧</a></li>
 	</ul>
 
+	<!-- 默认颜色 -->
 	<ul class="hc-nav" hc-filter="nav-two">
 		<li>处理中心</li>
-		<li class="hc-active">
+		<li>
 			<div>我的工作台</div>
 			<ul class="hc-nav-child">
 				<li>选项1</li>
+				<li class="hc-active">选项2</li>
+				<li>选项3</li>
+				<li>选项4</li>
+			</ul>
+		</li>
+		<li>
+			<div>订单中心</div>
+			<ul class="hc-nav-child">
+				<li>选项1</li>
+				<li>选项2</li>
+				<li>选项3</li>
+				<li>选项4</li>
+			</ul>
+		</li>
+		<li><a href="http://www.baidu.com" target="_blank">长一点的名字试试吧</a></li>
+	</ul>
+
+	<br>
+
+	<!-- 垂直的，默认颜色 -->
+	<ul class="hc-nav hc-nav-vertical">
+		<li>处理中心</li>
+		<li class="hc-nav-expand">
+			<div>我的工作台</div>
+			<ul class="hc-nav-child">
+				<li class="hc-active">选项1</li>
 				<li>选项2</li>
 				<li>选项3</li>
 				<li>选项4</li>
@@ -113,10 +144,21 @@
 
 	<br>
 
-	<ul class="hc-nav hc-nav-vertical">
+	<!-- 垂直的，自定义颜色 -->
+	<ul class="hc-nav hc-nav-vertical"
+	hc-background="#545963" hc-text-color="#fff" hc-text-color-active="#ffd04b">
 		<li>处理中心</li>
-		<li class="hc-active hc-nav-expand">
+		<li class="hc-nav-expand">
 			<div>我的工作台</div>
+			<ul class="hc-nav-child">
+				<li class="hc-active">选项1</li>
+				<li>选项2</li>
+				<li>选项3</li>
+				<li>选项4</li>
+			</ul>
+		</li>
+		<li>
+			<div>订单中心</div>
 			<ul class="hc-nav-child">
 				<li>选项1</li>
 				<li>选项2</li>
@@ -124,9 +166,9 @@
 				<li>选项4</li>
 			</ul>
 		</li>
-		<li>订单中心</li>
-		<li>长一点的名字试试吧</li>
+		<li><a href="http://www.baidu.com" target="_blank">长一点的名字试试吧</li>
 	</ul>
+
 </div>
 
 <script src="./js/hcelem.js"></script>

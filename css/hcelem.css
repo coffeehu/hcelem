@@ -73,6 +73,9 @@
 	border-bottom-color: transparent;
 	color: inherit;
 }
+.hc-nav > li > div{
+	position: relative;
+}
 /*箭头*/
 .hc-icon-arrow{
 	display: inline-block;
@@ -125,47 +128,37 @@
 .hc-nav-vertical{
 	width: 200px;
 	padding: 0;
-	background: rgb(84, 92, 100);
+	border:1px solid #eee;
 }
-.hc-nav-vertical li{
+.hc-nav-vertical > li{
 	display: block;
 	width: 100%;
+	line-height: 45px;
 	height: auto;
-}
-.hc-nav-vertical li:hover{
-	/*background: #4E5465;*/
-}
-.hc-nav-vertical > li:hover,
-.hc-nav-vertical > li:hover > a{
-	color: #fff;
+	border:none;
 }
 .hc-nav-vertical > li.hc-active{
-	border-bottom: none;
-	color: #fff;
+	color:#409eff;
 }
 /*二级菜单*/
 .hc-nav-vertical ul.hc-nav-child{
 	border:none;
 	box-shadow: none;
-	background: rgb(67, 74, 80);
+	z-index: 0;
+	background: #fafafa;
 }
 .hc-nav-vertical ul.hc-nav-child li{
 	box-sizing: border-box;
 }
 /*展开样式*/
-.hc-nav-vertical li.hc-nav-expand{
-	color: #fff;
-}
 .hc-nav-vertical li.hc-nav-expand .hc-nav-child{
 	display: block;
 }
 /*箭头*/
 .hc-nav-vertical .hc-icon-arrow{
-	float: right;
-	margin-top: 23px;
-}
-.hc-nav-vertical .hc-icon-arrow-up{
-	margin-top: 28px;
+	position: absolute;
+	top:50%;
+	right: 10px;
 }
 /*------------动画------------*/
 .hc-anim{

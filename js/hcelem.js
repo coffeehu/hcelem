@@ -308,7 +308,8 @@ var events = {};
 var calls = {
 	navClick:function(evt){
 		var navItem = this; //选中的一级菜单导航元素
-		var nav = utils.parent(navItem); 
+		var nav = utils.parent(navItem);
+		var isVertical = utils.hasClass(nav,'hc-nav-vertical'); // 是否是垂直菜单栏
 		var target = evt.target;
 		var targetNavItem; //选中的菜单导航元素
 
@@ -316,12 +317,30 @@ var calls = {
 		var textColorActive = utils.attr(nav,'hc-text-color-active'); //选中的文字颜色
 
 		var checkIt = function(navItem){
-			var _navItems = utils.siblings(navItem);
+			/*
+				垂直菜单栏的情况，把上一次选中的item存储起来；
+				每次点击时，先还原上次选中item的样式--这样可以避免多次DOM遍历
+			*/
+			if(isVertical){
+				if(nav.navClicked){
+					utils.removeClass(nav.navClicked,'hc-active');
+					if(textColorActive){
+						if(textColor) utils.css(nav.navClicked,'color',textColor);
+					}
+				}
+				nav.navClicked = navItem;
+				utils.addClass(navItem,'hc-active');
+				if(textColorActive){
+					utils.css(navItem,'color',textColorActive);
+				}
+				return;
+			}
 
+			var _navItems = utils.siblings(navItem);
 			if(textColorActive){
 				utils.each(_navItems,function(index,_navItem){
 					utils.removeClass(_navItem,'hc-active');
-					utils.css(_navItem,{'color':textColor, 'border-bottom-color':'transparent'});
+					if(textColor) utils.css(_navItem,{'color':textColor, 'border-bottom-color':'transparent'});
 				})
 				utils.addClass(navItem,'hc-active');
 				utils.css(navItem,{'color':textColorActive, 'border-bottom-color':textColorActive});
@@ -337,9 +356,17 @@ var calls = {
 		var _p = utils.parent(target);
 		if( utils.hasClass(_p,'hc-nav-child') ){ //是二级菜单栏
 			targetNavItem = target;
-			checkIt(target);
-			var navItem = utils.parent(_p);
-			checkIt(navItem);
+			checkIt(target); //自己的选中样式
+
+			/*
+				默认菜单栏，选中二级菜单后，其父菜单栏也设置选中；
+				垂直菜单栏，选中二级菜单后，其父菜单栏样式不做处理。
+			*/
+			if(!isVertical){
+				var navItem = utils.parent(_p);
+				checkIt(navItem);
+			}
+
 			utils.removeClass(_p,'hc-show');
 			/*setTimeout(function(){
 				utils.removeClass(_p,'hc-show');
@@ -546,6 +573,11 @@ var views = {
 
 				//若有二级菜单栏
 				if(child){
+					//垂直状态栏下，有二级菜单栏的菜单不能有 active 状态
+					if(isVertical){
+						utils.removeClass(navItem,'hc-active');
+					}
+
 					utils.addClass(child,'hc-anim hc-anim-slipdown');
 
 					//名称旁加一个箭头按钮
@@ -553,8 +585,21 @@ var views = {
 					arrow = document.createElement('i');
 					utils.addClass(arrow,'hc-icon-arrow hc-icon-arrow-down');
 					_title.appendChild(arrow);
+					// 遍历二级菜单栏的item
 					var _childNavItems = utils.children(child,'li');
 					utils.each(_childNavItems,function(index,_childNavItem){
+						//普通菜单栏情况下，若默认设置了 active 状态，则父菜单栏也应该设为 active 状态
+						if( utils.hasClass(_childNavItem,'hc-active') ){
+							if(isVertical){
+								nav.navClicked = _childNavItem;
+							}else{
+								utils.addClass(navItem,'hc-active');
+							}
+							if(textColorActive){
+								utils.css(_childNavItem,'color',textColorActive);
+							}
+						}
+
 						_childNavItem.onmouseenter = function(){
 							utils.css(_childNavItem,{'background':backgroundHover});
 						};
@@ -565,8 +610,13 @@ var views = {
 
 					//自定样式的处理
 					if(background){
-						//二级菜单栏的背景也设为background
-						utils.css(child,{'background':background});
+						if(isVertical){
+							//垂直菜单栏中二级菜单颜色要浅一些
+							utils.css(child,{'background':backgroundHover});
+						}else{
+							//普通菜单栏中二级菜单栏的背景也设为background
+							utils.css(child,{'background':background});
+						}
 					}
 					if(textColor){
 						//设置二级菜单的color
@@ -586,12 +636,23 @@ var views = {
 				对于默认菜单栏（水平）的鼠标悬停事件（若有二级菜单，则弹出）;
 				对于垂直菜单栏，鼠标悬停时不做处理。
 				*/
-				navItem.onmouseenter = function(){
-					if(isVertical) return false;
+				navItem.onmouseenter = function(e){
+					var target = e.target;
+					
 					if(timeId) clearTimeout(timeId);
 
 					//设置自定义悬停样式
-					utils.css(navItem,{'background':backgroundHover});
+					if(isVertical){
+						if( utils.hasClass(navItem,'hc-nav-expand') ){
+							//如果是展开的，就不要变色了
+						}else{
+							utils.css(navItem,{'color':textColorActive});
+						}
+					}else{
+						utils.css(navItem,{'background':backgroundHover});
+					}
+
+					if(isVertical) return false;
 
 					//有二级菜单栏时
 					if(child){
@@ -616,11 +677,16 @@ var views = {
 					}
 				};
 				navItem.onmouseleave = function(){
-					if(isVertical) return false;
 					if(timeId) clearTimeout(timeId);
 
 					//设置自定义悬停样式
-					utils.css(navItem,{'background':'none'});
+					if(isVertical){
+						utils.css(navItem,{'color':textColor});
+					}else{
+						utils.css(navItem,{'background':'none'});
+					}
+
+					if(isVertical) return false;
 
 					if(child){
 						//箭头向上
