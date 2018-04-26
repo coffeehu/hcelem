@@ -321,7 +321,7 @@ var calls = {
 			if(textColorActive){
 				utils.each(_navItems,function(index,_navItem){
 					utils.removeClass(_navItem,'hc-active');
-					utils.css(_navItem,{'color':textColor});
+					utils.css(_navItem,{'color':textColor, 'border-bottom-color':'transparent'});
 				})
 				utils.addClass(navItem,'hc-active');
 				utils.css(navItem,{'color':textColorActive, 'border-bottom-color':textColorActive});
@@ -518,7 +518,6 @@ var views = {
 
 		utils.each(views.naves,function(index,nav){
 
-			var childrenNav = nav.getElementsByClassName('hc-nav-child');
 			/*设置自定义的样式*/
 			var background = nav.background = utils.attr(nav,'hc-background'), //背景颜色
 				textColor = nav.textColor = utils.attr(nav,'hc-text-color'), //文字颜色
@@ -529,21 +528,12 @@ var views = {
 				//菜单栏的背景设置
 				utils.css(nav,{background:background});
 				//获得鼠标悬停时的background颜色（变为比原来的颜色深);
-				console.log('background',background, utils.toRgb(background))
 				backgroundHover = utils.toRgb(background);
-				//二级菜单栏的背景也设为background
-				utils.each(childrenNav,function(index,childNav){
-					utils.css(childNav,{'background':background});
-				})
 			}
 			if(textColor){
 				utils.addClass(nav,'hc-nav-custom'); //给菜单栏nav添加标签
 				//设置菜单的color，这影响到 navItem 的文字颜色
 				utils.css(nav,{color:textColor});
-				//设置二级菜单的color
-				utils.each(childrenNav,function(index,childNav){
-					utils.css( childNav,{'color':textColor} );
-				})
 			}
 			
 			var isVertical = utils.hasClass(nav,'hc-nav-vertical');			
@@ -554,8 +544,11 @@ var views = {
 				var arrow; //箭头
 				var timeId;
 
-				//名称旁加一个箭头按钮
+				//若有二级菜单栏
 				if(child){
+					utils.addClass(child,'hc-anim hc-anim-slipdown');
+
+					//名称旁加一个箭头按钮
 					var _title = utils.prev(child);
 					arrow = document.createElement('i');
 					utils.addClass(arrow,'hc-icon-arrow hc-icon-arrow-down');
@@ -569,9 +562,19 @@ var views = {
 							utils.css(_childNavItem,{'background':'none'});	
 						};
 					});
+
+					//自定样式的处理
+					if(background){
+						//二级菜单栏的背景也设为background
+						utils.css(child,{'background':background});
+					}
+					if(textColor){
+						//设置二级菜单的color
+						utils.css( child,{'color':textColor} );
+					}
 				}
 
-				//自定样式的处理
+
 				if(textColorActive){
 					if( utils.hasClass(navItem,'hc-active') ){ //选中的样式
 						utils.css(navItem,{'color':textColorActive, 'border-bottom-color':textColorActive});
@@ -605,6 +608,8 @@ var views = {
 							});
 						}
 						//显示二级菜单栏
+						//utils.removeClass(child,'hc-anim-slipup');
+						//utils.addClass(child,'hc-show');
 						timeId = setTimeout(function(){
 							utils.addClass(child,'hc-show');
 						},300);
@@ -621,6 +626,7 @@ var views = {
 						//箭头向上
 						utils.removeClass(arrow,'hc-icon-arrow-up');
 						//二级菜单栏隐藏
+						//utils.removeClass(child,'hc-show');
 						timeId = setTimeout(function(){
 							utils.removeClass(child,'hc-show');
 						},300);

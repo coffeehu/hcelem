@@ -38,13 +38,18 @@
 	height: 60px;
 	line-height: 60px;
 	box-sizing: border-box;
+	border-bottom: 2px solid transparent;
 	padding:0 20px;
 	font-size: 14px;
 	white-space: nowrap;
 	cursor: pointer;
+	transition: border-color .3s,color .3s;
 }
 /*li里面可以嵌入一个a标签*/
 .hc-nav > li > a{
+	display: block;
+	width: 100%;
+	height: 100%;
 	text-decoration: none;
 	color: inherit;
 }
@@ -60,12 +65,12 @@
 }
 /*默认选中样式*/
 .hc-nav > li.hc-active{
-	border-bottom: 2px solid #409eff;
+	border-bottom-color:#409eff;
 	color: #303133;
 }
 /*自定义样式时，关闭默认选中样式*/
 .hc-nav.hc-nav-custom > li.hc-active{
-	border-bottom:2px solid transparent;
+	border-bottom-color: transparent;
 	color: inherit;
 }
 /*箭头*/
@@ -94,6 +99,7 @@
 	z-index: 1;
 	margin: 0 -20px;
 	margin-top: 5px;
+	overflow: hidden;
 	list-style: none;
 	border:1px solid #e2e2e2;
 	box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
@@ -161,6 +167,45 @@
 .hc-nav-vertical .hc-icon-arrow-up{
 	margin-top: 28px;
 }
+/*------------动画------------*/
+.hc-anim{
+	-webkit-animation-duration: 0.3s;
+	animation-duration: 0.3s;
+	-webkit-animation-fill-mode: both;
+	animation-fill-mode: both;
+}
+/* 下滑 */
+.hc-anim-slipdown{
+	-webkit-animation-name: hc-anim-slipdown;
+	animation-name: hc-anim-slipdown;
+	animation-timing-function: ease-out;
+	-webkit-animation-timing-function: ease-out;
+	/*animation-delay: .3s;
+	-webkit-animation-delay: .3s;*/
+}
+@-webkit-keyframes hc-anim-slipdown{ 
+  from {
+  	max-height: 0px;
+  	opacity: 0.3;
+  }
+  to {
+  	max-height: 1000px;
+  	opacity: 1;
+  }
+}
+@keyframes hc-anim-slipdown{
+  from {
+  	max-height: 0px;
+  	opacity: 0.3;
+  }
+  to {
+  	max-height: 1000px;
+  	opacity: 1;
+  }
+}
+
+
+
 
 
 /*################ 选项卡 ###############*/
