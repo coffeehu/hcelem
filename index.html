@@ -122,7 +122,7 @@
 	<br>
 
 	<!-- 垂直的，默认颜色 -->
-	<ul class="hc-nav hc-nav-vertical">
+	<ul class="hc-nav hc-nav-vertical" hc-filter="nav-three">
 		<li>处理中心</li>
 		<li class="hc-nav-expand">
 			<div>我的工作台</div>
@@ -148,7 +148,7 @@
 	<br>
 
 	<!-- 垂直的，自定义颜色 -->
-	<ul class="hc-nav hc-nav-vertical"
+	<ul class="hc-nav hc-nav-vertical" hc-filter="nav-four"
 	hc-background="#545963" hc-text-color="#fff" hc-text-color-active="#ffd04b">
 		<li>处理中心</li>
 		<li class="hc-nav-expand">
@@ -207,6 +207,14 @@
 
 	element.on('navclick','nav-two',function(evt){
 		console.log('第二个nav click！！！!',this,evt)
+	})
+
+	element.on('navclick','nav-three',function(evt){
+		console.log('第三个nav click=====',this,evt)
+	})
+
+	element.on('navclick','nav-four',function(evt){
+		console.log('第四个nav click----------',this,evt)
 	})
 </script>
 </body>
