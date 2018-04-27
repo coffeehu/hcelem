@@ -18,6 +18,25 @@
 
 <!-- ##################### 选项卡 ###################### -->
 <div class="container">
+
+	<!-- 普通选项卡 -->
+	<div class="hc-tab" hc-filter="two">
+	  <ul class="hc-tab-title">
+	    <li class="hc-active">网站设置</li>
+	    <li>coffee</li>
+	    <li>tea</li>
+	    <li>milk</li>
+	    <li>apple</li>
+	  </ul>
+	  <div class="hc-tab-content">
+	    <div class="hc-tab-content-item hc-show">1</div>
+	    <div class="hc-tab-content-item">2</div>
+	    <div class="hc-tab-content-item">3</div>
+	    <div class="hc-tab-content-item">4</div>
+	    <div class="hc-tab-content-item">5</div>
+	  </div>
+	</div>
+
 	<!-- 可删除的选项卡 -->
 	<div class="hc-tab" hc-tab-close="true" hc-filter="one">
 		<ul class="hc-tab-title">
@@ -42,24 +61,6 @@
 		</div>
 	</div>
 
-	<!-- 普通选项卡 -->
-	<div class="hc-tab" hc-filter="two">
-	  <ul class="hc-tab-title">
-	    <li class="hc-active">网站设置</li>
-	    <li>coffee</li>
-	    <li>tea</li>
-	    <li>milk</li>
-	    <li>apple</li>
-	  </ul>
-	  <div class="hc-tab-content">
-	    <div class="hc-tab-content-item hc-show">1</div>
-	    <div class="hc-tab-content-item">2</div>
-	    <div class="hc-tab-content-item">3</div>
-	    <div class="hc-tab-content-item">4</div>
-	    <div class="hc-tab-content-item">5</div>
-	  </div>
-	</div>
-
 	<button id="test">add tab in one</button>
 </div>
 
@@ -67,15 +68,14 @@
 <!-- ##################### 菜单导航栏 ###################### -->
 <div class="container2">
 
-	<!-- 自定义颜色 -->
-	<ul class="hc-nav" hc-filter="nav-one"
-	hc-background="#545963" hc-text-color="#fff" hc-text-color-active="#ffd04b">
-		<li>处理中心</li>
+	<!-- 默认颜色 -->
+	<ul class="hc-nav" hc-filter="nav-two">
+		<li class="hc-active">处理中心</li>
 		<li>
 			<div>我的工作台</div>
 			<ul class="hc-nav-child">
 				<li>选项1</li>
-				<li class="hc-active">选项2</li>
+				<li>选项2</li>
 				<li>选项3</li>
 				<li>选项4</li>
 			</ul>
@@ -92,8 +92,11 @@
 		<li><a href="http://www.baidu.com" target="_blank">长一点的名字试试吧</a></li>
 	</ul>
 
-	<!-- 默认颜色 -->
-	<ul class="hc-nav" hc-filter="nav-two">
+	<br>
+
+	<!-- 自定义颜色 -->
+	<ul class="hc-nav" hc-filter="nav-one"
+	hc-background="#545963" hc-text-color="#fff" hc-text-color-active="#ffd04b">
 		<li>处理中心</li>
 		<li>
 			<div>我的工作台</div>

@@ -162,8 +162,8 @@
 }
 /*------------动画------------*/
 .hc-anim{
-	-webkit-animation-duration: 0.3s;
-	animation-duration: 0.3s;
+	-webkit-animation-duration: .3s;
+	animation-duration: .3s;
 	-webkit-animation-fill-mode: both;
 	animation-fill-mode: both;
 }
@@ -173,6 +173,14 @@
 	animation-name: hc-anim-slipdown;
 	animation-timing-function: ease-out;
 	-webkit-animation-timing-function: ease-out;
+	/*animation-delay: .3s;
+	-webkit-animation-delay: .3s;*/
+}
+.hc-anim-slipup{
+	-webkit-animation-name: hc-anim-slipup;
+	animation-name: hc-anim-slipup;
+	animation-timing-function: linear;
+	-webkit-animation-timing-function: linear;
 	/*animation-delay: .3s;
 	-webkit-animation-delay: .3s;*/
 }
@@ -194,6 +202,22 @@
   to {
   	max-height: 1000px;
   	opacity: 1;
+  }
+}
+@-webkit-keyframes hc-anim-slipup{ 
+  from {
+  	max-height: 1000px;
+  }
+  to {
+  	max-height: 0px;
+  }
+}
+@keyframes hc-anim-slipup{
+  from {
+  	max-height: 1000px;
+  }
+  to {
+  	max-height: 0px;
   }
 }
 

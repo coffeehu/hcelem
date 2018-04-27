@@ -295,11 +295,17 @@ utils.addcss();
 
 /*
 	事件集合，
+	navclick -- nav菜单栏的点击回调
 	tabclick -- tab标签页的点击回调
 	tabdel -- tab标签页的删除回调
 	tabadd -- tab标签页的新增回调
 */
-var events = {};
+var events = {
+	'navclick':{},
+	'tabclick':{},
+	'tabdel':{},
+	'tabadd':{}
+};
 
 /*
 	操作集合
@@ -368,16 +374,14 @@ var calls = {
 			}
 
 			utils.removeClass(_p,'hc-show');
-			/*setTimeout(function(){
-				utils.removeClass(_p,'hc-show');
-			},150);*/
 		}else{ //是一级菜单栏
 			targetNavItem = navItem;
 			if( utils.children(navItem,'.hc-nav-child')[0] ){ //有二级菜单栏
 				if( utils.hasClass(navItem,'hc-nav-expand') ){
 					utils.removeClass(navItem,'hc-nav-expand');
 				}else{
-					utils.addClass(navItem,'hc-nav-expand');	
+					utils.addClass(navItem,'hc-nav-expand');
+					utils.css(navItem,'color',textColor);
 				}
 				return;
 			}else{ //无二级菜单栏，直接点击
@@ -387,7 +391,7 @@ var calls = {
 
 		//触发回调事件
 		var filter = utils.attr( utils.parent(navItem), 'hc-filter');
-		if(events['navclick'] && events['navclick'][filter]){
+		if(events['navclick'][filter]){
 			events['navclick'][filter].call(targetNavItem,evt);
 		}
 
@@ -418,7 +422,7 @@ var calls = {
 		})
 
 		//触发回调事件
-		if(events['tabclick'] && events['tabclick'][filter]){
+		if( events['tabclick'][filter]){
 			events['tabclick'][filter].call(li,evt,index)
 		}
 	},
@@ -430,7 +434,7 @@ var calls = {
 
 		//触发回调事件
 		var filter = utils.attr(tab,'hc-filter');
-		if(events['tabdel'] && events['tabdel'][filter]){
+		if( events['tabdel'][filter]){
 			events['tabdel'][filter].call(li,evt,index)
 		}
 
@@ -482,7 +486,7 @@ var calls = {
 		content.appendChild(div);
 
 		//触发回调
-		if(events['tabadd'] && events['tabadd'][filter]){
+		if( events['tabadd'][filter]){
 			events['tabadd'][filter](li);
 		}
 
@@ -601,10 +605,18 @@ var views = {
 						}
 
 						_childNavItem.onmouseenter = function(){
-							utils.css(_childNavItem,{'background':backgroundHover});
+							if(isVertical){
+								utils.css(_childNavItem,{'color':textColorActive});
+							}else{
+								utils.css(_childNavItem,{'background':backgroundHover});
+							}
 						};
 						_childNavItem.onmouseleave = function(){
-							utils.css(_childNavItem,{'background':'none'});	
+							if(isVertical && !utils.hasClass(_childNavItem,'hc-active') ){
+								utils.css(_childNavItem,{'color':textColor});
+							}else{
+								utils.css(_childNavItem,{'background':'none'});	
+							}
 						};
 					});
 
@@ -680,7 +692,7 @@ var views = {
 					if(timeId) clearTimeout(timeId);
 
 					//设置自定义悬停样式
-					if(isVertical){
+					if(isVertical && !utils.hasClass(navItem,'hc-active') ){
 						utils.css(navItem,{'color':textColor});
 					}else{
 						utils.css(navItem,{'background':'none'});
@@ -778,10 +790,9 @@ Element.prototype.init = function(){
 	fn：回调函数
 */
 Element.prototype.on = function(eventName,filter,fn){
-	if(!events[eventName]){
-		events[eventName] = {};
+	if(events[eventName]){
+		events[eventName][filter] = fn;
 	}
-	events[eventName][filter] = fn;
 }
 
 //tab的点击切换
