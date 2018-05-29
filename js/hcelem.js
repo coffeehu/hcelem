@@ -291,7 +291,7 @@ var utils = {
 	    }  
 	}
 };
-utils.addcss();
+//utils.addcss();
 
 /*
 	事件集合，
